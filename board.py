@@ -50,7 +50,7 @@ class BoardManager:
         hit_submarine = self.own_board[row][column]
         hit_submarine.hit_location(location)
         self.own_board[row][column] = LocationState.HIT
-        if hit_submarine.is_dead:
+        if hit_submarine.is_dead():
             return AttackResult.KILL
         else:
             return AttackResult.HIT

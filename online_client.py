@@ -67,7 +67,7 @@ class OnlineClient:
         self.__verify_has_connection()
         other_side_message = 0
         while other_side_message != GAME_FLAG:
-            other_side_message = self.other_player_socket.recv(1)
+            other_side_message = byte_to_num(self.other_player_socket.recv(1))
 
     def send_attack(self, location):
         self.__verify_has_connection()
@@ -90,7 +90,7 @@ class OnlineClient:
 
     def send_response_for_attack(self, response):
         self.__verify_has_connection()
-        self.other_player_socket.send(num_to_byte(response))
+        self.other_player_socket.send(num_to_byte(response.value))
 
     def receive_response_for_attack(self):
         self.__verify_has_connection()

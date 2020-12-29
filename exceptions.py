@@ -4,3 +4,11 @@ class LocationOccupiedException(Exception):
 
 class ConnectionNotMadeYetException(Exception):
     pass
+
+
+class EnemySurrenderedException(Exception):
+    pass
+
+
+class SelfSurrenderException(Exception):
+    pass

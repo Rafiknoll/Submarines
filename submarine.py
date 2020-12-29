@@ -1,4 +1,5 @@
 from enum import Enum
+from consts import BOARD_SIZE
 
 
 class SubmarineState(Enum):
@@ -10,7 +11,13 @@ class Submarine:
 
     def __init__(self, *locations):
         self.locations = {}
-        for location in range(len(locations)):
+        board_height, board_width = BOARD_SIZE
+        for location in locations:
+            row, column = location
+            if row not in range(board_height) or column not in range(board_width):
+                raise ValueError("Location out of board range")
+            if location in self.locations.keys():
+                raise KeyError("Location given twice")
             self.locations[location] = SubmarineState.UNDETECTED
 
     def hit_location(self, location):

@@ -15,8 +15,8 @@ def create_multi_dimensional_array(*sizes, default_value=None):
 
 
 def num_to_byte(num: int) -> bytes:
-    return chr(num).encode()
+    return num.to_bytes(1, "big")
 
 
 def byte_to_num(byte: bytes) -> int:
-    return ord(byte.decode())
+    return int.from_bytes(byte, "big")
