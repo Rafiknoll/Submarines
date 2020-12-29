@@ -1,26 +1,14 @@
 from enum import Enum
+from submarine import Submarine
 from utils import create_multi_dimensional_array
 from exceptions import LocationOccupiedException
-from consts import BOARD_SIZE
+from consts import BOARD_SIZE, AttackResult
 
 
 class LocationState(Enum):
     UNKNOWN = 0
     EMPTY = 1
     HIT = 2
-
-
-class SubmarineState(Enum):
-    UNDETECTED = 0
-    HIT = 1
-
-
-class Submarine:
-
-    def __init__(self, *locations):
-        self.locations = {}
-        for location in range(len(locations)):
-            self.locations[location] = SubmarineState.UNDETECTED
 
 
 class BoardManager:
@@ -33,7 +21,8 @@ class BoardManager:
     def find_occupied_locations(self, *locations):
         occupied_locations = []
         for location in locations:
-            if self.own_board[location[0]][location[1]] != LocationState.EMPTY:
+            row, column = location
+            if self.own_board[row][column] != LocationState.EMPTY:
                 occupied_locations.append(location)
         return occupied_locations
 
@@ -43,6 +32,27 @@ class BoardManager:
             submarine = Submarine(*locations)
             self.submarines.append(submarine)
             for location in locations:
-                self.own_board[location[0]][location[1]] = submarine
+                row, column = location
+                self.own_board[row][column] = submarine
         else:
             raise LocationOccupiedException(f"Location(s) already occupied: {occupied_locations}")
+
+    def get_result_of_being_attacked(self, location):
+        row, column = location
+        if self.own_board[row][column] in [LocationState.EMPTY, LocationState.HIT]:
+            return AttackResult.MISS
+
+        hit_submarine = self.own_board[row][column]
+        hit_submarine.hit_location(location)
+        self.own_board[row][column] = LocationState.HIT
+        if hit_submarine.is_dead:
+            return AttackResult.KILL
+        else:
+            return AttackResult.HIT
+
+    def save_result_of_attacking(self, location, result):
+        row, column = location
+        if result == AttackResult.MISS:
+            self.enemy_board[row][column] = LocationState.EMPTY
+        else:
+            self.enemy_board[row][column] = LocationState.HIT

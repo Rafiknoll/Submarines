@@ -2,7 +2,7 @@ import socket
 from exceptions import ConnectionNotMadeYetException
 from utils import num_to_byte, byte_to_num
 
-from consts import GAME_PORT, DEFAULT_SUBMARINES_SIZES
+from consts import GAME_PORT, DEFAULT_SUBMARINES_SIZES, GAME_FLAG
 
 ANY_IP = "0.0.0.0"
 
@@ -56,3 +56,13 @@ class OnlineClient:
             submarines_lengths = DEFAULT_SUBMARINES_SIZES
             self.__send_submarines_lengths(submarines_lengths)
             return submarines_lengths
+
+    def send_flag(self):
+        self.__verify_has_connection()
+        self.other_player_socket.send(num_to_byte(GAME_FLAG))
+
+    def wait_for_flag(self):
+        self.__verify_has_connection()
+        other_side_message = 0
+        while other_side_message != GAME_FLAG:
+            other_side_message = self.other_player_socket.recv(1)
