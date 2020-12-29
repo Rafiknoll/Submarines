@@ -1,0 +1,2 @@
+class LocationOccupiedException(Exception):
+    pass
