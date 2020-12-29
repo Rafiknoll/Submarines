@@ -10,5 +10,13 @@ def create_multi_dimensional_array(*sizes, default_value=None):
         return ret_val
 
     for index in range(sizes[0]):
-        ret_val.append(create_multi_dimensional_array(*sizes[1:], default_value))
+        ret_val.append(create_multi_dimensional_array(*sizes[1:], default_value=default_value))
     return ret_val
+
+
+def num_to_byte(num: int) -> bytes:
+    return chr(num).encode()
+
+
+def byte_to_num(byte: bytes) -> int:
+    return ord(byte.decode())

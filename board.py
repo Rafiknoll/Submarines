@@ -1,6 +1,7 @@
 from enum import Enum
 from utils import create_multi_dimensional_array
 from exceptions import LocationOccupiedException
+from consts import BOARD_SIZE
 
 
 class LocationState(Enum):
@@ -24,11 +25,9 @@ class Submarine:
 
 class BoardManager:
 
-    BOARD_SIZE = (10, 10)
-
     def __init__(self):
-        self.enemy_board = create_multi_dimensional_array(*self.BOARD_SIZE, LocationState.UNKNOWN)
-        self.own_board = create_multi_dimensional_array(*self.BOARD_SIZE, LocationState.EMPTY)
+        self.enemy_board = create_multi_dimensional_array(*BOARD_SIZE, default_value=LocationState.UNKNOWN)
+        self.own_board = create_multi_dimensional_array(*BOARD_SIZE, default_value=LocationState.EMPTY)
         self.submarines = []
 
     def find_occupied_locations(self, *locations):
