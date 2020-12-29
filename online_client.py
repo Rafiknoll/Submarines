@@ -2,9 +2,11 @@ import socket
 from exceptions import ConnectionNotMadeYetException
 from utils import num_to_byte, byte_to_num
 
-from consts import GAME_PORT, DEFAULT_SUBMARINES_SIZES, GAME_FLAG
+from consts import GAME_PORT, DEFAULT_SUBMARINES_SIZES, GAME_FLAG, SURRENDER_FLAG
 
 ANY_IP = "0.0.0.0"
+HEX_BASE = 16
+HEX_RANGE = range(HEX_BASE)
 
 
 class OnlineClient:
@@ -66,3 +68,30 @@ class OnlineClient:
         other_side_message = 0
         while other_side_message != GAME_FLAG:
             other_side_message = self.other_player_socket.recv(1)
+
+    def send_attack(self, location):
+        self.__verify_has_connection()
+        row, column = location
+        if row not in HEX_RANGE or column not in HEX_RANGE:
+            raise TypeError("Location index out of possible hexadecimal range")
+
+        attack_number = row * HEX_BASE + column
+        self.other_player_socket.send(num_to_byte(attack_number))
+
+    def receive_attack(self):
+        self.__verify_has_connection()
+        message = byte_to_num(self.other_player_socket.recv(1))
+        if message == SURRENDER_FLAG:
+            return SURRENDER_FLAG
+
+        row = message // HEX_BASE
+        column = message % HEX_BASE
+        return row, column
+
+    def send_response_for_attack(self, response):
+        self.__verify_has_connection()
+        self.other_player_socket.send(num_to_byte(response))
+
+    def receive_response_for_attack(self):
+        self.__verify_has_connection()
+        return byte_to_num(self.other_player_socket.recv(1))

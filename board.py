@@ -17,6 +17,7 @@ class BoardManager:
         self.enemy_board = create_multi_dimensional_array(*BOARD_SIZE, default_value=LocationState.UNKNOWN)
         self.own_board = create_multi_dimensional_array(*BOARD_SIZE, default_value=LocationState.EMPTY)
         self.submarines = []
+        self.submarines_to_sink = 0
 
     def find_occupied_locations(self, *locations):
         occupied_locations = []
@@ -34,12 +35,16 @@ class BoardManager:
             for location in locations:
                 row, column = location
                 self.own_board[row][column] = submarine
+            self.submarines_to_sink += 1  # It is logical that for each submarine we have, the other person has one
         else:
             raise LocationOccupiedException(f"Location(s) already occupied: {occupied_locations}")
 
     def get_result_of_being_attacked(self, location):
         row, column = location
-        if self.own_board[row][column] in [LocationState.EMPTY, LocationState.HIT]:
+        try:
+            if self.own_board[row][column] in [LocationState.EMPTY, LocationState.HIT]:
+                return AttackResult.MISS
+        except IndexError:
             return AttackResult.MISS
 
         hit_submarine = self.own_board[row][column]
@@ -56,3 +61,5 @@ class BoardManager:
             self.enemy_board[row][column] = LocationState.EMPTY
         else:
             self.enemy_board[row][column] = LocationState.HIT
+            if result == AttackResult.KILL:
+                self.submarines_to_sink -= 1
