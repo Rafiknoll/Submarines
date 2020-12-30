@@ -49,6 +49,11 @@ class GameManager:
         if location == SURRENDER_LOCATION:
             raise SelfSurrenderException
         attack_results = self.online_client.receive_response_for_attack()
+
+        # The below if statement is for protocol compatibility. There is no way it will happen in this implementation
+        if attack_results == SURRENDER_FLAG:
+            raise EnemySurrenderedException
+
         print(self.parse_attack_results(attack_results))
         self.board.save_result_of_attacking(location, attack_results)
         if self.board.submarines_to_sink == 0:
