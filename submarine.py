@@ -32,9 +32,9 @@ class Submarine:
         for location in locations:
             row, column = location
             if row not in range(board_height) or column not in range(board_width):
-                raise ValueError("Location out of board range")
+                raise ValueError(f"Location out of board range: {location}")
             if location in self.locations.keys():
-                raise KeyError("Location given twice")
+                raise KeyError(f"Location given twice: {location}")
             if prev_row is not None and prev_column is not None and not (
                     (abs(row-prev_row) == 0 and abs(column-prev_column) == 1) or
                     (abs(row-prev_row) == 1 and abs(column-prev_column) == 0)):
