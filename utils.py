@@ -1,4 +1,23 @@
+"""
+Name:       utils.py
+
+Purpose:    Provides utility functions for the submarine game that where not fit anywhere else
+
+Usage:      from utils import create_multi_dimensional_array, num_to_byte, byte_to_num
+
+Author:     Rafael Knoll
+"""
+
+
 def create_multi_dimensional_array(*sizes, default_value=None):
+    """
+    Creates a multi-dimensional array of the given sizes
+    :param sizes: An iterable of sizes for the array
+    :param default_value: A default value for all members of the innermost arrays (Note it better be primitive as it is
+    a shallow copy!)
+    :return: The multi-dimensional array
+    :raises: TypeError if no dimensions were given
+    """
     if len(sizes) == 0:
         raise TypeError("create_multi_dimensional_array expected at list 1 positional argument, got 0")
 
@@ -15,8 +34,18 @@ def create_multi_dimensional_array(*sizes, default_value=None):
 
 
 def num_to_byte(num: int) -> bytes:
+    """
+    Converts a number to bytes representation of one byte
+    :param num: The number
+    :return: The byte
+    """
     return num.to_bytes(1, "big")
 
 
 def byte_to_num(byte: bytes) -> int:
+    """
+    Converts a bytes representation of one byte to a number
+    :param byte: The byte
+    :return: The number
+    """
     return int.from_bytes(byte, "big")
