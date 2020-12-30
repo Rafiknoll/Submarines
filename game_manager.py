@@ -85,7 +85,6 @@ class GameManager:
 
             # If we got here, that's a loss
             print("You lost!")
-            self.online_client.send_attack(SURRENDER_LOCATION)
         except EnemySurrenderedException:
             print("Your enemy surrendered or lost")
         except SelfSurrenderException:
@@ -117,6 +116,9 @@ class GameManager:
 
         print(self.parse_attack_results(attack_results))
         self.board.save_result_of_attacking(location, attack_results)
+        if AttackResult(attack_results) != AttackResult.MISS:
+            self.execute_attack()
+
         if self.board.submarines_to_sink == 0:
             print("You won!")
 
@@ -132,7 +134,12 @@ class GameManager:
         print(f"Enemy targets location : {location}")
         attack_results = self.board.get_result_of_being_attacked(location)
         print(self.parse_attack_results(attack_results))
+        if self.is_lost():
+            self.online_client.send_attack(SURRENDER_LOCATION)
+            return
         self.online_client.send_response_for_attack(attack_results)
+        if AttackResult(attack_results) != AttackResult.MISS and not self.is_lost():
+            self.receive_attack()
 
     def is_lost(self):
         """
