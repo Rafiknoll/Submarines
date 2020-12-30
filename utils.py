@@ -49,3 +49,17 @@ def byte_to_num(byte: bytes) -> int:
     :return: The number
     """
     return int.from_bytes(byte, "big")
+
+
+def int_input(prompt=""):
+    """
+    Reads an integer from the user until he actually gives one
+    :param prompt: The input prompt
+    :return: The integer
+    """
+    while True:
+        user_input = input(prompt)
+        try:
+            return int(user_input)
+        except ValueError:
+            print("Must input a number!")

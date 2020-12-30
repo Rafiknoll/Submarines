@@ -9,9 +9,9 @@ Author:     Rafael Knoll
 """
 from online_client import OnlineClient
 from board import BoardManager
-from predifined_submarines import insert_predefined_submarines
-from exceptions import EnemySurrenderedException, SelfSurrenderException
+from exceptions import EnemySurrenderedException, SelfSurrenderException, LocationOccupiedException
 from consts import AttackResult, SURRENDER_FLAG
+from utils import int_input
 
 SURRENDER_LOCATION = (15, 15)  # [This is direct by-product of the surrender flag in the protocol]
 
@@ -32,14 +32,41 @@ class GameManager:
         """
         submarine_lengths = self.online_client.decide_submarines_lengths()
         print(f"Please insert locations for submarines with the following lengths {submarine_lengths}:")
-        # We will actually skip this because this is very tiresome for testing
-        print("Inserting predefined submarines instead")
-        insert_predefined_submarines(self.board)
-        print("Ready to start")
-        # The skip ends here
+        self.read_submarines(submarine_lengths)
+        print("Waiting for the other player to get ready")
         self.online_client.send_flag()
         self.online_client.wait_for_flag()
         print("Game starting")
+
+    def read_submarines(self, submarines_lengths):
+        """
+        Reads the required submarines from the user
+        :return: None
+        """
+        for submarine_length in submarines_lengths:
+            self.read_submarine(submarine_length)
+
+    def read_submarine(self, submarine_length):
+        """
+        Reads a single submarine from the user
+        :return: None
+        """
+        while True:
+            print(f"Enter coordinates for a submarine of length {submarine_length}")
+            locations = []
+            for _ in range(submarine_length):
+                row = int_input("Enter row number: ")
+                column = int_input("Enter column number: ")
+                locations.append((row, column))
+            try:
+                self.board.place_submarine(locations)
+                return
+            except ValueError as error:
+                print(error.args[0])
+            except KeyError as error:
+                print(error.args[0])
+            except LocationOccupiedException as error:
+                print(error.args[0])
 
     def loop_turns(self):
         """
@@ -71,8 +98,8 @@ class GameManager:
         Requests attack location from the user and displays the results of the attack
         :return: None
         """
-        row = int(input("Input row to attack: "))
-        column = int(input("Input column to attack: "))
+        row = int_input("Input row to attack: ")
+        column = int_input("Input column to attack: ")
         location = (row, column)
         self.online_client.send_attack(location)
         if location == SURRENDER_LOCATION:
