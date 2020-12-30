@@ -26,6 +26,8 @@ class Submarine:
 
     def __init__(self, *locations):
         self.locations = {}
+        prev_row = None
+        prev_column = None
         board_height, board_width = BOARD_SIZE
         for location in locations:
             row, column = location
@@ -33,7 +35,12 @@ class Submarine:
                 raise ValueError("Location out of board range")
             if location in self.locations.keys():
                 raise KeyError("Location given twice")
+            if prev_row is not None and prev_column is not None and not (
+                    (abs(row-prev_row) == 0 and abs(column-prev_column) == 1) or
+                    (abs(row-prev_row) == 1 and abs(column-prev_column) == 0)):
+                raise ValueError(f"Locations are not neighbouring: {(row, column)} and {(prev_row, prev_column)}")
             self.locations[location] = SubmarineState.UNDETECTED
+            prev_row, prev_column = location
 
     def hit_location(self, location):
         """
