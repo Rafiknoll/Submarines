@@ -55,10 +55,16 @@ class GameManager:
                     self.receive_attack()
                     if not self.is_lost():
                         self.execute_attack()
+
+            # If we got here, that's a loss
+            print("You lost!")
+            self.online_client.send_attack(SURRENDER_LOCATION)
         except EnemySurrenderedException:
-            print("Your enemy surrendered")
+            print("Your enemy surrendered or lost")
         except SelfSurrenderException:
             print("You surrendered")
+        except ConnectionAbortedError:
+            print("Your enemy disconnected. You won.")
 
     def execute_attack(self):
         """

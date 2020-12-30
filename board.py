@@ -94,9 +94,9 @@ class BoardManager:
         :return: None
         """
         row, column = location
-        if result == AttackResult.MISS:
+        if AttackResult(result) == AttackResult.MISS:
             self.enemy_board[row][column] = LocationState.EMPTY
         else:
             self.enemy_board[row][column] = LocationState.HIT
-            if result == AttackResult.KILL:
+            if AttackResult(result) == AttackResult.KILL:
                 self.submarines_to_sink -= 1
