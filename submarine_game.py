@@ -79,7 +79,7 @@ class GameManager:
         else:
             ret_str = "Hit"
             if AttackResult(attack_results) == AttackResult.KILL:
-               ret_str += ", Submarine sunk!"
+                ret_str += ", Submarine sunk!"
         return ret_str
 
 
