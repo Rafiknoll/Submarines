@@ -98,10 +98,15 @@ class GameManager:
         Requests attack location from the user and displays the results of the attack
         :return: None
         """
-        row = int_input("Input row to attack: ")
-        column = int_input("Input column to attack: ")
-        location = (row, column)
-        self.online_client.send_attack(location)
+        while True:
+            row = int_input("Input row to attack: ")
+            column = int_input("Input column to attack: ")
+            location = (row, column)
+            try:
+                self.online_client.send_attack(location)
+                break
+            except TypeError as error:
+                print(error.args[0])
         if location == SURRENDER_LOCATION:
             raise SelfSurrenderException
         attack_results = self.online_client.receive_response_for_attack()
